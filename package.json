@@ -1,0 +1,30 @@
+{
+  "name": "rentnest-backend-api",
+  "version": "1.0.0",
+  "description": "RentNest is a secure, scalable RRESTful backend API designed for a rental property marketplace. The platform connects tenants, landlords, and administrators in a single ecosystem where landlords can publish rental properties, tenants can request rentals and complete online payments, and administrators can monitor the entire platform. The system follows a role based access control(RBAC) architecture and implements a complete rental lifecycle -- from property discovery to payment confirmation and review submission.",
+  "license": "ISC",
+  "author": "Uhai Mong --Next Level Developer",
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsx",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.1.0",
+    "@types/pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  }
+}
