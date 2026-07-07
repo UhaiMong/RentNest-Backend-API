@@ -1,7 +1,18 @@
-import express, { Request, Express, Response } from "express";
-const app: Express = express();
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import express, { Request, Response, Application } from "express";
+import { env } from "./config/env";
+const app: Application = express();
 
+app.use(
+  cors({
+    origin: env.app_url,
+    credentials: true,
+  }),
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("RentNest API is running...");

@@ -1,0 +1,21 @@
+model Profile{
+    id String @id @default(uuid())
+    avatar String?
+    about String?
+
+    userId String @unique
+    user User @relation(fields: [userId],references: [id])
+    createdA DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("profiles")
+}
+
+// CREATE TABLE "profiles" (
+//   "id" uuid PRIMARY KEY,
+//   "userId" uuid NOT NULL,
+//   "avatar" varchar,
+//   "about" varchar,
+//   "createdAt" timestamp,
+//   "updatedAt" timestamp
+// );
