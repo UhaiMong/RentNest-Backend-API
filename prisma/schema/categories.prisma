@@ -1,0 +1,9 @@
+model Category {
+  id         String     @id @default(uuid())
+  propertyType PropertyType @default(APARTMENT)
+  usageType    UsageType    @default(RESIDENTIAL)
+  createdAt  DateTime   @default(now())
+  properties Property[]
+
+  @@map("categories")
+}

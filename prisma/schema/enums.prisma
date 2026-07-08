@@ -1,5 +1,37 @@
 enum Role {
-  tenant
-  landlord
-  admin
+  TENANT
+  LANDLORD
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+enum PaymentProvider {
+  STRIPE
+}
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  STUDIO
+  SHOP
+  SUPER_SHOP
+}
+enum UsageType {
+  RESIDENTIAL
+  NON_RESIDENTIAL
+  COMMERCIAL
+}
+enum RentalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }

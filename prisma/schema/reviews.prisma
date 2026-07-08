@@ -1,0 +1,32 @@
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String
+  likeCount Int      @default(0)
+  isBanned   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenantId String
+  tenant   User   @relation("TenantReviews", fields: [tenantId], references: [id])
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  replies ReviewReply[]
+
+  @@map("reviews")
+}
+
+// Future scope:
+model ReviewReply {
+  id        String   @id @default(uuid())
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviewId String
+  review   Review @relation(fields: [reviewId], references: [id])
+
+  @@map("review_replies")
+}
