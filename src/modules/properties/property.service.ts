@@ -75,6 +75,7 @@ const listProperties = async (query: PropertyQueryInput) => {
   };
 };
 
+// By Landord id
 const listPropertiesByLandlord = async (landlordId: string) => {
   const properties = await prisma.property.findMany({
     where: { landlordId },
@@ -82,12 +83,28 @@ const listPropertiesByLandlord = async (landlordId: string) => {
       category: true,
       landlord: { select: { id: true, name: true, phone: true } },
     },
+    orderBy: { createdAt: "desc" },
   });
   return properties;
+};
+
+// Propert id
+const getPropertyById = async (id: string) => {
+  const property = await prisma.property.findUnique({
+    where: { id: id },
+    include: {
+      category: true,
+      landlord: { select: { id: true, name: true, phone: true, email: true } },
+      reviews: { include: { tenant: { select: { id: true, name: true } } } },
+    },
+  });
+  if (!property) throw new ApiError(404, "Property not found");
+  return property;
 };
 
 export const propertyService = {
   postProperty,
   listProperties,
   listPropertiesByLandlord,
+  getPropertyById,
 };

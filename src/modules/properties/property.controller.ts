@@ -62,7 +62,8 @@ const listProperties = asyncHandler(async (req: Request, res: Response) => {
 // list properties by landlord
 const listPropertiesByLandlord = asyncHandler(
   async (req: Request, res: Response) => {
-    const landlordId = req.user?.id;
+    const landlordId = req.user!.id;
+    console.log("Landlord Id: ", landlordId);
 
     try {
       const properties = await propertyService.listPropertiesByLandlord(
@@ -89,8 +90,39 @@ const listPropertiesByLandlord = asyncHandler(
   },
 );
 
+// get property by id
+const getSinglePropertyById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const propertyId = req.params.id as string;
+
+    console.log("Id: ", propertyId);
+
+    try {
+      const property = await propertyService.getPropertyById(propertyId!);
+
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Property retrieved successfully",
+        statusCode: httpStatus.OK,
+        data: property,
+      });
+    } catch (error) {
+      const statusCode = getErrorStatusCode(error);
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+        data: [],
+      });
+    }
+  },
+);
+
 export const propertyController = {
   postProperty,
   listProperties,
   listPropertiesByLandlord,
+  getSinglePropertyById,
 };

@@ -1,24 +1,14 @@
 import { Router } from "express";
 import { propertyController } from "./property.controller";
 import { authenticate, authorize } from "../../middlewares/auth.middleware";
+import { Role } from "../../../generated/prisma/enums";
 
 const router = Router();
 
-router.post(
-  "/create",
-  authenticate,
-  authorize("LANDLORD"),
-  propertyController.postProperty,
-);
 // List(Public)
 router.get("/", propertyController.listProperties);
 
-// Protected route
-router.get(
-  "/:landlordId",
-  authenticate,
-  authorize("LANDLORD"),
-  propertyController.listPropertiesByLandlord,
-);
+// Get property by id
+router.get("/:id", propertyController.getSinglePropertyById);
 
 export default router;
