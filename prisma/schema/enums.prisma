@@ -14,21 +14,28 @@ enum PaymentStatus {
   COMPLETED
   FAILED
 }
+
 enum PaymentProvider {
   STRIPE
 }
+
 enum PropertyType {
   APARTMENT
   HOUSE
   STUDIO
   SHOP
   SUPER_SHOP
+  OFFICE
+  OTHER
 }
+
 enum UsageType {
   RESIDENTIAL
   NON_RESIDENTIAL
   COMMERCIAL
+  OTHER
 }
+
 enum RentalStatus {
   PENDING
   APPROVED
