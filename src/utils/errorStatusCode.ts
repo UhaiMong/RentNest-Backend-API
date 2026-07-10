@@ -20,6 +20,12 @@ export const getErrorStatusCode = (error: unknown) => {
     ) {
       return httpStatus.CONFLICT;
     }
+    if (message.includes("banned")) {
+      return httpStatus.FORBIDDEN;
+    }
+    if (message.includes("invalid")) {
+      return httpStatus.UNAUTHORIZED;
+    }
     if (message.includes("not found")) {
       return httpStatus.NOT_FOUND;
     }

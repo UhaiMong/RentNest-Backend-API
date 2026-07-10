@@ -1,9 +1,11 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/ApiError";
-import { RegisterInput } from "./auth.validator";
+import { LoginInput, RegisterInput } from "./auth.validator";
 import { env } from "../../config/env";
+import { createRefreshToken, createToken } from "../../utils/jwt";
 
+// Register user
 const registerUser = async (data: RegisterInput) => {
   const existing = await prisma.user.findUniqueOrThrow({
     where: { email: data.email },
@@ -36,6 +38,34 @@ const registerUser = async (data: RegisterInput) => {
   return { user: safeUser };
 };
 
+// Login user
+const loginUser = async (data: LoginInput) => {
+  const user = await prisma.user.findUnique({ where: { email: data.email } });
+  if (!user) throw new ApiError(401, "Invalid email or password");
+
+  if (user.status === "BANNED")
+    throw new ApiError(403, "Your account has been banned");
+
+  const isMatch = await bcrypt.compare(data.password, user.password);
+  if (!isMatch) throw new ApiError(401, "Invalid email or password");
+
+  const accessToken = createToken({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  });
+  const refreshToken = createRefreshToken({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  });
+
+  return { accessToken, refreshToken };
+};
+
 export const authService = {
   registerUser,
+  loginUser,
 };
