@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PropertyType, UsageType } from "../../../generated/prisma/enums";
 
 export const createPropertySchema = z.object({
   title: z.string().min(3),
@@ -21,12 +22,41 @@ export const updatePropertySchema = createPropertySchema.partial().extend({
 export const propertyQuerySchema = z.object({
   location: z.string().optional(),
   categoryId: z.string().uuid().optional(),
+  propertyType: z
+    .enum([
+      PropertyType.APARTMENT,
+      PropertyType.HOUSE,
+      PropertyType.OFFICE,
+      PropertyType.SHOP,
+      PropertyType.STUDIO,
+      PropertyType.SUPER_SHOP,
+      PropertyType.OTHER,
+    ])
+    .optional(),
+  usageType: z
+    .enum([
+      UsageType.COMMERCIAL,
+      UsageType.RESIDENTIAL,
+      UsageType.NON_RESIDENTIAL,
+      UsageType.OTHER,
+    ])
+    .optional(),
   minPrice: z.coerce.number().optional(),
   maxPrice: z.coerce.number().optional(),
   bedrooms: z.coerce.number().int().optional(),
   bathrooms: z.coerce.number().int().optional(),
   sizeSqFt: z.coerce.number().positive().optional(),
-  amenities: z.array(z.string()).optional(),
+  amenities: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .transform((val) => {
+      if (!val) return undefined;
+      if (typeof val === "string") {
+        return val.split(",").map((a) => a.trim());
+      }
+      return val;
+    }),
+
   isAvailable: z.boolean().optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),

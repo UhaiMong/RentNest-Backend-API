@@ -10,5 +10,7 @@ router.post(
   authorize("LANDLORD"),
   propertyController.postProperty,
 );
+// List(Public)
+router.get("/", propertyController.listProperties);
 
 export default router;
