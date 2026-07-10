@@ -26,6 +26,29 @@ const createCategory = async (req: Request, res: Response) => {
   }
 };
 
+// List all categories
+const listCategories = async (req: Request, res: Response) => {
+  try {
+    const categories = await categoryService.listCategories();
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Retrieved categories successfully",
+      statusCode: httpStatus.OK,
+      data: categories,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error?.message : "Something went wrong!";
+    const statusCode = getErrorStatusCode(error);
+    res.status(statusCode).json({
+      success: false,
+      message: message,
+      statusCode: statusCode,
+    });
+  }
+};
+
 export const categoryController = {
   createCategory,
+  listCategories,
 };

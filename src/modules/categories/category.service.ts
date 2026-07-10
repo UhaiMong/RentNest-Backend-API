@@ -11,6 +11,16 @@ const createCategory = async (data: CreateCategoryInput) => {
   return category;
 };
 
+// List all categories
+const listCategories = async () => {
+  const categories = await prisma.category.findMany({
+    orderBy: { propertyType: "asc" },
+  });
+  if (!categories) throw new Error("No categories found");
+  return categories;
+};
+
 export const categoryService = {
   createCategory,
+  listCategories,
 };
