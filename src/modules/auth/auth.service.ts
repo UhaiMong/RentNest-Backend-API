@@ -8,7 +8,7 @@ import { Role } from "../../../generated/prisma/enums";
 
 // Register user
 const registerUser = async (data: RegisterInput) => {
-  const existing = await prisma.user.findUniqueOrThrow({
+  const existing = await prisma.user.findUnique({
     where: { email: data.email },
   });
   if (existing) throw new ApiError(409, "Email already registered");
@@ -24,7 +24,7 @@ const registerUser = async (data: RegisterInput) => {
       email: data.email,
       password: hashedPassword,
       role: data.role,
-      phone: data.phone,
+      phone: data?.phone,
       profile: {
         create: {},
       },
