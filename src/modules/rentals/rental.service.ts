@@ -44,6 +44,17 @@ const postRentalRequest = async (
   });
 };
 
+// Tenant view own rental requests
+const getTenantRentalRequests = async (tenantId: string) => {
+  const rentalRequests = await prisma.rentalRequest.findMany({
+    where: { tenantId },
+    include: { property: { include: { category: true } }, payment: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return rentalRequests;
+};
+
 export const rentalService = {
   postRentalRequest,
+  getTenantRentalRequests,
 };

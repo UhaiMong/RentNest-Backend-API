@@ -30,7 +30,33 @@ const postRentalRequest = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 });
+// Get own tenant rental requests
+const getTenantRentalRequests = asyncHandler(
+  async (req: Request, res: Response) => {
+    const tenantId = req.user!.id;
+    try {
+      const rentalRequests =
+        await rentalService.getTenantRentalRequests(tenantId);
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Rental requests retrieved successfully",
+        data: rentalRequests,
+      });
+    } catch (error) {
+      const statusCode = getErrorStatusCode(error);
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+        data: [],
+      });
+    }
+  },
+);
 
 export const rentalController = {
   postRentalRequest,
+  getTenantRentalRequests,
 };

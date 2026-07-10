@@ -7,5 +7,6 @@ const router = Router();
 router.use(authenticate);
 
 router.post("/create", authorize("TENANT"), rentalController.postRentalRequest);
+router.get("/", authorize("TENANT"), rentalController.getTenantRentalRequests);
 
 export default router;
