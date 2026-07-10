@@ -11,6 +11,8 @@ export const registerSchema = z.object({
   phone: z.string().optional(),
 });
 
+export type UpdateCredentialInput = Partial<typeof registerSchema>;
+
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),

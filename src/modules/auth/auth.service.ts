@@ -4,6 +4,7 @@ import { ApiError } from "../../utils/ApiError";
 import { LoginInput, RegisterInput } from "./auth.validator";
 import { env } from "../../config/env";
 import { createRefreshToken, createToken } from "../../utils/jwt";
+import { Role } from "../../../generated/prisma/enums";
 
 // Register user
 const registerUser = async (data: RegisterInput) => {
@@ -65,7 +66,36 @@ const loginUser = async (data: LoginInput) => {
   return { accessToken, refreshToken };
 };
 
+// Get myself
+const getMe = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      profile: true,
+      properties: true,
+      rentalRequests: true,
+    },
+  });
+  if (!user) throw new ApiError(404, "User not found");
+
+  const { password, ...safeUser } = user;
+  return { user: safeUser };
+};
+
+// Refresh access token
+const refreshAccessToken = async (payload: {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+}) => {
+  const accessToken = createToken(payload);
+  return { accessToken };
+};
+
 export const authService = {
   registerUser,
   loginUser,
+  getMe,
+  refreshAccessToken,
 };

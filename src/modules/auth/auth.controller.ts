@@ -4,6 +4,20 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { authService } from "./auth.service";
 import { loginSchema, registerSchema } from "./auth.validator";
 import { getErrorStatusCode } from "../../utils/errorStatusCode";
+import { ApiError } from "../../utils/ApiError";
+import {
+  JwtPayload,
+  verifyRefreshToken,
+  verifyTokenAccessToken,
+} from "../../utils/jwt";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
+}
 
 const register = asyncHandler(async (req: Request, res: Response) => {
   const parsed = registerSchema.parse(req.body);
@@ -65,7 +79,92 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// get refresh token
+const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
+  const cookies = req.cookies;
+  const refreshToken = cookies?.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+      statusCode: 401,
+    });
+  }
+  try {
+    const payload = verifyRefreshToken(refreshToken);
+    const { accessToken } = await authService.refreshAccessToken(payload);
+    res.status(200).json({
+      success: true,
+      message: "Access token refreshed successfully",
+      data: { accessToken },
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+    });
+  }
+});
+
+// Get current user
+const getMe = asyncHandler(async (req: Request, res: Response) => {
+  const cookies = req.cookies;
+  const accessToken = cookies?.accessToken;
+  if (!accessToken) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+      statusCode: 401,
+    });
+  }
+  const user = verifyTokenAccessToken(accessToken);
+  const userId = user?.id;
+  try {
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized");
+    }
+
+    const result = await authService.getMe(userId);
+    res.status(200).json({
+      success: true,
+      message: "User retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Something went wrong!";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+    });
+  }
+});
+
+// User Logout
+const logout = asyncHandler(async (req: Request, res: Response) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "none" as const,
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "none" as const,
+  });
+  res.status(200).json({ success: true, message: "Logged out successfully" });
+});
+
 export const authController = {
   register,
   login,
+  getMe,
+  refreshAccessToken,
+  logout,
 };

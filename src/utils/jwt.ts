@@ -19,7 +19,7 @@ export const createRefreshToken = (payload: JwtPayload) =>
   } as jwt.SignOptions);
 
 // Verify access token
-export const verifyToken = (token: string): JwtPayload =>
+export const verifyTokenAccessToken = (token: string): JwtPayload =>
   jwt.verify(token, env.jwt_secret) as JwtPayload;
 
 // Verify refresh token
