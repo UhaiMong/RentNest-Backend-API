@@ -6,6 +6,7 @@ import {
   propertyQuerySchema,
 } from "./property.validator";
 import { getErrorStatusCode } from "../../utils/errorStatusCode";
+import { Request, Response } from "express";
 
 const postProperty = asyncHandler(async (req, res) => {
   const parsed = createPropertySchema.parse(req.body);
@@ -33,7 +34,7 @@ const postProperty = asyncHandler(async (req, res) => {
 });
 
 // List all properties
-const listProperties = asyncHandler(async (req, res) => {
+const listProperties = asyncHandler(async (req: Request, res: Response) => {
   const parsed = propertyQuerySchema.parse(req.query);
 
   try {
@@ -58,7 +59,38 @@ const listProperties = asyncHandler(async (req, res) => {
   }
 });
 
+// list properties by landlord
+const listPropertiesByLandlord = asyncHandler(
+  async (req: Request, res: Response) => {
+    const landlordId = req.user?.id;
+
+    try {
+      const properties = await propertyService.listPropertiesByLandlord(
+        landlordId!,
+      );
+
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Properties retrieved successfully",
+        statusCode: httpStatus.OK,
+        data: properties,
+      });
+    } catch (error) {
+      const statusCode = getErrorStatusCode(error);
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+        data: [],
+      });
+    }
+  },
+);
+
 export const propertyController = {
   postProperty,
   listProperties,
+  listPropertiesByLandlord,
 };

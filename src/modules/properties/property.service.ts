@@ -75,7 +75,19 @@ const listProperties = async (query: PropertyQueryInput) => {
   };
 };
 
+const listPropertiesByLandlord = async (landlordId: string) => {
+  const properties = await prisma.property.findMany({
+    where: { landlordId },
+    include: {
+      category: true,
+      landlord: { select: { id: true, name: true, phone: true } },
+    },
+  });
+  return properties;
+};
+
 export const propertyService = {
   postProperty,
   listProperties,
+  listPropertiesByLandlord,
 };

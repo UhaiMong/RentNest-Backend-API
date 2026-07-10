@@ -13,4 +13,12 @@ router.post(
 // List(Public)
 router.get("/", propertyController.listProperties);
 
+// Protected route
+router.get(
+  "/:landlordId",
+  authenticate,
+  authorize("LANDLORD"),
+  propertyController.listPropertiesByLandlord,
+);
+
 export default router;
