@@ -8,4 +8,6 @@ router.use(authenticate, authorize("LANDLORD"));
 
 router.post("/", propertyController.postProperty);
 router.get("/", propertyController.listPropertiesByLandlord);
+router.put("/:id", propertyController.updateProperty);
+router.delete("/:id", propertyController.deleteProperty);
 export default router;

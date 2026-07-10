@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import {
   createPropertySchema,
   propertyQuerySchema,
+  updatePropertySchema,
 } from "./property.validator";
 import { getErrorStatusCode } from "../../utils/errorStatusCode";
 import { Request, Response } from "express";
@@ -120,9 +121,66 @@ const getSinglePropertyById = asyncHandler(
   },
 );
 
+const updateProperty = asyncHandler(async (req: Request, res: Response) => {
+  const propertyId = req.params.id as string;
+  const landlordId = req.user!.id;
+  const parsed = updatePropertySchema.parse(req.body);
+
+  try {
+    const property = await propertyService.updateProperty(
+      landlordId,
+      propertyId,
+      parsed,
+    );
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Property updated successfully",
+      statusCode: httpStatus.OK,
+      data: property,
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+      data: [],
+    });
+  }
+});
+const deleteProperty = asyncHandler(async (req: Request, res: Response) => {
+  const propertyId = req.params.id as string;
+  const landlordId = req.user!.id;
+  try {
+    await propertyService.deleteProperty(landlordId, propertyId);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Property deleted successfully",
+      statusCode: httpStatus.OK,
+      data: [],
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+      data: [],
+    });
+  }
+});
+
 export const propertyController = {
   postProperty,
   listProperties,
   listPropertiesByLandlord,
   getSinglePropertyById,
+  updateProperty,
+  deleteProperty,
 };

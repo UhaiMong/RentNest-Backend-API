@@ -1,7 +1,11 @@
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/ApiError";
-import { CreatePropertyInput, PropertyQueryInput } from "./property.validator";
+import {
+  CreatePropertyInput,
+  PropertyQueryInput,
+  UpdatePropertyInput,
+} from "./property.validator";
 
 const postProperty = async (landlordId: string, data: CreatePropertyInput) => {
   const category = await prisma.category.findUnique({
@@ -102,9 +106,47 @@ const getPropertyById = async (id: string) => {
   return property;
 };
 
+const updateProperty = async (
+  landlordId: string,
+  propertyId: string,
+  data: UpdatePropertyInput,
+) => {
+  const property = await prisma.property.findUnique({
+    where: { id: propertyId },
+  });
+
+  if (!property) throw new ApiError(404, "Property not found");
+
+  const updatedProperty = await prisma.property.update({
+    where: { id: propertyId },
+    data: { ...data, landlordId },
+  });
+
+  return updatedProperty;
+};
+
+const deleteProperty = async (landlordId: string, propertyId: string) => {
+  const property = await prisma.property.findUnique({
+    where: { id: propertyId },
+  });
+
+  if (!property) throw new ApiError(404, "Property not found");
+
+  // Check if the landlord is the owner of the property
+  if (property.landlordId !== landlordId) {
+    throw new ApiError(403, "You are not the owner of this property");
+  }
+
+  await prisma.property.delete({
+    where: { id: propertyId },
+  });
+};
+
 export const propertyService = {
   postProperty,
   listProperties,
   listPropertiesByLandlord,
   getPropertyById,
+  updateProperty,
+  deleteProperty,
 };
