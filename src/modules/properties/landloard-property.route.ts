@@ -6,8 +6,8 @@ const router = Router();
 
 router.use(authenticate, authorize("LANDLORD"));
 
-router.post("/", propertyController.postProperty);
+router.post("/create", propertyController.postProperty);
 router.get("/", propertyController.listPropertiesByLandlord);
-router.put("/:id", propertyController.updateProperty);
-router.delete("/:id", propertyController.deleteProperty);
+router.put("/:id/update", propertyController.updateProperty);
+router.delete("/:id/delete", propertyController.deleteProperty);
 export default router;
