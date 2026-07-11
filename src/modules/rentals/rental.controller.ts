@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { createRentalRequestSchema } from "./rental.validator";
+import {
+  createRentalRequestSchema,
+  updateRentalStatusSchema,
+} from "./rental.validator";
 import httpStatus from "http-status";
 import { rentalService } from "./rental.service";
 import { getErrorStatusCode } from "../../utils/errorStatusCode";
@@ -111,6 +114,37 @@ const getLandlordRentalRequests = asyncHandler(
     }
   },
 );
+
+// Update rental request status by landlord
+
+const updateRentalStatus = asyncHandler(async (req: Request, res: Response) => {
+  const requestId = req.params.id as string;
+  const landLordId = req.user!.id;
+  const parsed = updateRentalStatusSchema.parse(req.body);
+  try {
+    const request = await rentalService.updateRentalStatus(
+      requestId,
+      landLordId,
+      parsed,
+    );
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: `Request ${parsed.status.toLowerCase()}`,
+      statusCode: httpStatus.OK,
+      data: request,
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+      data: [],
+    });
+  }
+});
 
 export const rentalController = {
   postRentalRequest,

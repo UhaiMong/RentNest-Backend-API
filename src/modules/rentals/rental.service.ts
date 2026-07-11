@@ -2,7 +2,10 @@
 
 import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/ApiError";
-import { CreateRentalRequestInput } from "./rental.validator";
+import {
+  CreateRentalRequestInput,
+  UpdateRentalStatusInput,
+} from "./rental.validator";
 
 const postRentalRequest = async (
   tenantId: string,
@@ -98,10 +101,37 @@ export const getLandlordRentalRequests = async (landlordId: string) => {
     orderBy: { createdAt: "desc" },
   });
 };
+// Landlord approve/reject a request status
+const updateRentalStatus = async (
+  id: string,
+  landlordId: string,
+  data: UpdateRentalStatusInput,
+) => {
+  const request = await prisma.rentalRequest.findUnique({
+    where: { id },
+    include: { property: true },
+  });
+  if (!request) throw new ApiError(404, "Rental request not found");
+  if (request.property.landlordId !== landlordId) {
+    throw new ApiError(403, "You do not own the property for this request");
+  }
+  if (request.status !== "PENDING") {
+    throw new ApiError(
+      400,
+      `Request already ${request.status.toLowerCase()}, cannot change status`,
+    );
+  }
+
+  return prisma.rentalRequest.update({
+    where: { id },
+    data: { status: data.status },
+  });
+};
 
 export const rentalService = {
   postRentalRequest,
   getTenantRentalRequests,
   getRentalRequestById,
   getLandlordRentalRequests,
+  updateRentalStatus,
 };
