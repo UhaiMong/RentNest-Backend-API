@@ -68,7 +68,35 @@ const getRentalRequestById = asyncHandler(
       res.status(httpStatus.OK).json({
         success: true,
         message: "Rental request retrieved successfully",
+        statusCode: httpStatus.OK,
         data: request,
+      });
+    } catch (error) {
+      const statusCode = getErrorStatusCode(error);
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+        data: [],
+      });
+    }
+  },
+);
+
+// Landlord
+const getLandlordRentalRequests = asyncHandler(
+  async (req: Request, res: Response) => {
+    const landlorId = req.user!.id as string;
+    try {
+      const requests = await rentalService.getLandlordRentalRequests(landlorId);
+
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Requested rental property retrieved successfully",
+        statusCode: httpStatus.OK,
+        data: requests,
       });
     } catch (error) {
       const statusCode = getErrorStatusCode(error);
@@ -88,4 +116,6 @@ export const rentalController = {
   postRentalRequest,
   getTenantRentalRequests,
   getRentalRequestById,
+  getLandlordRentalRequests,
+  updateRentalStatus,
 };

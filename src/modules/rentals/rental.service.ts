@@ -70,6 +70,7 @@ const getRentalRequestById = async (
           phone: true,
         },
       },
+      payment: true,
     },
   });
   if (!request) throw new ApiError(404, "Rental request not found");
@@ -83,8 +84,24 @@ const getRentalRequestById = async (
   return request;
 };
 
+// Landlord: view all requests by their properties
+export const getLandlordRentalRequests = async (landlordId: string) => {
+  return prisma.rentalRequest.findMany({
+    where: { property: { landlordId } },
+    include: {
+      property: true,
+      tenant: {
+        select: { id: true, name: true, email: true, phone: true },
+      },
+      payment: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};
+
 export const rentalService = {
   postRentalRequest,
   getTenantRentalRequests,
   getRentalRequestById,
+  getLandlordRentalRequests,
 };
