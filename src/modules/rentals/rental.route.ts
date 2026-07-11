@@ -9,4 +9,6 @@ router.use(authenticate);
 router.post("/create", authorize("TENANT"), rentalController.postRentalRequest);
 router.get("/", authorize("TENANT"), rentalController.getTenantRentalRequests);
 
+router.get("/:id", rentalController.getRentalRequestById);
+
 export default router;

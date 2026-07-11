@@ -56,7 +56,36 @@ const getTenantRentalRequests = asyncHandler(
   },
 );
 
+// Get rental request by id
+const getRentalRequestById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const rentalId = req.params.id as string;
+    try {
+      const request = await rentalService.getRentalRequestById(
+        rentalId,
+        req.user!,
+      );
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Rental request retrieved successfully",
+        data: request,
+      });
+    } catch (error) {
+      const statusCode = getErrorStatusCode(error);
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+        data: [],
+      });
+    }
+  },
+);
+
 export const rentalController = {
   postRentalRequest,
   getTenantRentalRequests,
+  getRentalRequestById,
 };
