@@ -40,5 +40,5 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/landlord/properties", landLordPropertyRoutes);
 app.use("/api/rentals", rentalRoutes);
-app.use("/api/landlord/requests");
+app.use("/api/landlord/requests", landlordRentalRequestRoutes);
 export default app;
