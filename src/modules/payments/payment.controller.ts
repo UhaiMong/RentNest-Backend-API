@@ -54,7 +54,32 @@ const confirmPayment = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// Get payment history role base access:
+const getPaymentHistory = asyncHandler(async (req: Request, res: Response) => {
+  const requester = req.user!;
+  try {
+    const payments = await paymentService.getPaymentHistory(requester);
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Payment history",
+      statusCode: httpStatus.OK,
+      data: payments,
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+      data: [],
+    });
+  }
+});
+
 export const paymentController = {
   createPayment,
   confirmPayment,
+  getPaymentHistory,
 };

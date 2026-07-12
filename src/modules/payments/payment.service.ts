@@ -88,7 +88,49 @@ const confirmPayment = async (paymentIntentId: string) => {
   return updatedPayment;
 };
 
+// Payment history by role base access: tenant-> own payment, landlord->payments on their properties, admin->all
+
+const getPaymentHistory = async (requester: { id: string; role: string }) => {
+  // ADMIN
+  if (requester.role === "ADMIN") {
+    return prisma.payment.findMany({
+      include: {
+        rentalRequest: {
+          include: {
+            property: true,
+            tenant: { select: { id: true, name: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+  // LANDLORD
+  if (requester.role === "LANDLORD") {
+    return prisma.payment.findMany({
+      where: { rentalRequest: { property: { landlordId: requester.id } } },
+      include: {
+        rentalRequest: {
+          include: {
+            property: true,
+            tenant: { select: { id: true, name: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  // TENANT
+  return prisma.payment.findMany({
+    where: { rentalRequest: { tenantId: requester.id } },
+    include: { rentalRequest: { include: { property: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+};
+
 export const paymentService = {
   createPaymentIntent,
   confirmPayment,
+  getPaymentHistory,
 };
