@@ -9,6 +9,8 @@ import propertyRoutes from "./modules/properties/property.route";
 import landLordPropertyRoutes from "./modules/properties/landloard-property.route";
 import rentalRoutes from "./modules/rentals/rental.route";
 import landlordRentalRequestRoutes from "./modules/rentals/landlord-rental.route";
+import paymentRoutes from "./modules/payments/payment.route";
+import reviewRoutes from "./modules/reviews/review.routes";
 const app: Application = express();
 
 app.use(
@@ -17,6 +19,16 @@ app.use(
     credentials: true,
   }),
 );
+
+// stripe webhook route
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  () => {
+    // stripe webhook handler logic here
+  },
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -41,4 +53,6 @@ app.use("/api/properties", propertyRoutes);
 app.use("/api/landlord/properties", landLordPropertyRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/landlord/requests", landlordRentalRequestRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/reviews", reviewRoutes);
 export default app;
