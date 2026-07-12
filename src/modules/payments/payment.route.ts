@@ -8,4 +8,5 @@ router.use(authenticate);
 router.post("/create", authorize("TENANT"), paymentController.createPayment);
 router.post("/confirm", authorize("TENANT"), paymentController.confirmPayment);
 router.get("/", paymentController.getPaymentHistory);
+router.get("/:id", paymentController.getPaymentById);
 export default router;

@@ -129,8 +129,32 @@ const getPaymentHistory = async (requester: { id: string; role: string }) => {
   });
 };
 
+// Get payment by id
+const getPaymentById = async (
+  id: string,
+  requester: { id: string; role: string },
+) => {
+  const payment = await prisma.payment.findUnique({
+    where: { id },
+    include: { rentalRequest: { include: { property: true, tenant: true } } },
+  });
+  if (!payment) throw new ApiError(404, "Payment not found");
+
+  const isTenantOwner = payment.rentalRequest.tenantId === requester.id;
+  const isLandlordOwner =
+    payment.rentalRequest.property.landlordId === requester.id;
+  const isAdmin = requester.role === "ADMIN";
+
+  if (!isTenantOwner && !isLandlordOwner && !isAdmin) {
+    throw new ApiError(403, "You do not have access to this payment");
+  }
+
+  return payment;
+};
+
 export const paymentService = {
   createPaymentIntent,
   confirmPayment,
   getPaymentHistory,
+  getPaymentById,
 };

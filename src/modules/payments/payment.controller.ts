@@ -78,8 +78,36 @@ const getPaymentHistory = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// Get pyament by id
+export const getPaymentById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const paymentId = req.params.id! as string;
+    const requester = req.user!;
+    try {
+      const payment = await paymentService.getPaymentById(paymentId, requester);
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Payment details retrieved",
+        statusCode: httpStatus.OK,
+        data: payment,
+      });
+    } catch (error) {
+      const statusCode = getErrorStatusCode(error);
+      const message =
+        error instanceof Error ? error.message : "Internal server error";
+      res.status(statusCode).json({
+        success: false,
+        message,
+        statusCode,
+        data: [],
+      });
+    }
+  },
+);
+
 export const paymentController = {
   createPayment,
   confirmPayment,
   getPaymentHistory,
+  getPaymentById,
 };
