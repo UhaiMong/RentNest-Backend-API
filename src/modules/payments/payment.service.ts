@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/ApiError";
 import { CreatePaymentInput } from "./payment.validator";
 
+// Create payment intent
 const createPaymentIntent = async (
   tenantId: string,
   data: CreatePaymentInput,
@@ -47,6 +48,47 @@ const createPaymentIntent = async (
   return { payment, clientSecret: paymentIntent.client_secret };
 };
 
+// Confirm/verify payment
+const confirmPayment = async (paymentIntentId: string) => {
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+  const payment = await prisma.payment.findUnique({
+    where: { transactionId: paymentIntentId },
+    include: { rentalRequest: true },
+  });
+  if (!payment)
+    throw new ApiError(404, "Payment record not found for this transaction");
+
+  if (paymentIntent.status !== "succeeded") {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: "FAILED" },
+    });
+    throw new ApiError(
+      400,
+      `Payment not completed. Stripe status: ${paymentIntent.status}`,
+    );
+  }
+
+  const [updatedPayment] = await prisma.$transaction([
+    prisma.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: "COMPLETED",
+        paidAt: new Date(),
+        method: paymentIntent.payment_method_types?.[0] ?? "card",
+      },
+    }),
+    prisma.rentalRequest.update({
+      where: { id: payment.rentalRequestId },
+      data: { status: "APPROVED" },
+    }),
+  ]);
+
+  return updatedPayment;
+};
+
 export const paymentService = {
   createPaymentIntent,
+  confirmPayment,
 };

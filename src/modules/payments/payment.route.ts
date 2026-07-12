@@ -6,4 +6,5 @@ const router = Router();
 
 router.use(authenticate);
 router.post("/create", authorize("TENANT"), paymentController.createPayment);
+router.post("/confirm", authorize("TENANT"), paymentController.confirmPayment);
 export default router;
