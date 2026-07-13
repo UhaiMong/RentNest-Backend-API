@@ -4,6 +4,7 @@ import { adminController } from "./admin.controller";
 
 const router = Router();
 
+// Protected: ADMIN only
 router.use(authenticate, authorize("ADMIN"));
 
 router.get("/users", adminController.getAllUsers);

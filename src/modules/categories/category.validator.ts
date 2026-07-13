@@ -17,5 +17,11 @@ export const categorySchema = z.object({
     UsageType.OTHER,
   ]),
 });
+export const updateCategorySchema = categorySchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided to update",
+  });
 
 export type CreateCategoryInput = z.infer<typeof categorySchema>;
+export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
