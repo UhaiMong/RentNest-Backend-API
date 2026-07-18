@@ -1,5 +1,3 @@
-// Tenant submit a rental request for a property
-
 import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/ApiError";
 import {
@@ -41,8 +39,15 @@ const postRentalRequest = async (
       status: "PENDING",
     },
     include: {
-      property: true,
-      tenant: true,
+      property: { select: { title: true, price: true, location: true } },
+      tenant: {
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+          status: true,
+        },
+      },
     },
   });
 };
@@ -50,9 +55,23 @@ const postRentalRequest = async (
 // Tenant view own rental requests
 const getTenantRentalRequests = async (tenantId: string) => {
   const rentalRequests = await prisma.rentalRequest.findMany({
-    where: { tenantId },
-    include: { property: { include: { category: true } }, payment: true },
-    orderBy: { createdAt: "desc" },
+    where: {
+      tenantId,
+    },
+    include: {
+      property: {
+        select: {
+          title: true,
+          location: true,
+          landlordId: true,
+          category: true,
+        },
+      },
+      payment: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   return rentalRequests;
 };
@@ -64,7 +83,12 @@ const getRentalRequestById = async (
   const request = await prisma.rentalRequest.findUnique({
     where: { id },
     include: {
-      property: true,
+      property: {
+        select: {
+          title: true,
+          landlordId: true,
+        },
+      },
       tenant: {
         select: {
           id: true,
@@ -88,7 +112,7 @@ const getRentalRequestById = async (
 };
 
 // Landlord: view all requests by their properties
-export const getLandlordRentalRequests = async (landlordId: string) => {
+const getLandlordRentalRequests = async (landlordId: string) => {
   return prisma.rentalRequest.findMany({
     where: { property: { landlordId } },
     include: {
@@ -109,7 +133,9 @@ const updateRentalStatus = async (
 ) => {
   const request = await prisma.rentalRequest.findUnique({
     where: { id },
-    include: { property: true },
+    include: {
+      property: { select: { title: true, location: true, landlordId: true } },
+    },
   });
   if (!request) throw new ApiError(404, "Rental request not found");
   if (request.property.landlordId !== landlordId) {

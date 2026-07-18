@@ -4,9 +4,19 @@ import { paymentController } from "./payment.controller";
 
 const router = Router();
 
-router.use(authenticate);
-router.post("/create", authorize("TENANT"), paymentController.createPayment);
-router.post("/confirm", authorize("TENANT"), paymentController.confirmPayment);
-router.get("/", paymentController.getPaymentHistory);
-router.get("/:id", paymentController.getPaymentById);
+router.post(
+  "/create",
+  authenticate,
+  authorize("TENANT"),
+  paymentController.createPayment,
+);
+router.post(
+  "/confirm",
+  authenticate,
+  authorize("TENANT"),
+  paymentController.confirmPayment,
+);
+router.post("/webhook", paymentController.stripeWebHook);
+router.get("/", authenticate, paymentController.getPaymentHistory);
+router.get("/:id", authenticate, paymentController.getPaymentById);
 export default router;
