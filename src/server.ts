@@ -2,24 +2,20 @@ import app from "./app";
 import { env } from "./config/env";
 import { prisma } from "./lib/prisma";
 
-const PORT = env.port;
-
-const main = async () => {
+async function main() {
   try {
     await prisma.$connect();
     console.log("Databse connected successfully.");
-    app.listen(PORT, () => {
-      console.log(`RentNest API is running on: ${PORT}`);
+    app.listen(env?.port, () => {
+      console.log(`RentNest API is running on: ${env?.port}`);
     });
   } catch (error) {
     await prisma.$disconnect();
     console.error("Error when running the server");
     process.exit(1);
   }
-};
-
-if (!process.env.VERCEL) {
-  main();
 }
+
+main();
 
 export default app;
