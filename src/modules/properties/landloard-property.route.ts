@@ -9,5 +9,9 @@ router.use(authenticate, authorize("LANDLORD"));
 router.post("/create", propertyController.postProperty);
 router.get("/", propertyController.listPropertiesByLandlord);
 router.put("/:id/update", propertyController.updateProperty);
-router.delete("/:id/delete", propertyController.deleteProperty);
+(router.patch(
+  "/:id/toggle-availability",
+  propertyController.toggleAvailability,
+),
+  router.delete("/:id/delete", propertyController.deleteProperty));
 export default router;

@@ -142,6 +142,25 @@ const deleteProperty = async (landlordId: string, propertyId: string) => {
   });
 };
 
+const toggleAvailability = async (landlordId: string, propertyId: string) => {
+  const property = await prisma.property.findUnique({
+    where: { id: propertyId },
+  });
+
+  if (!property) throw new ApiError(404, "Property not found");
+
+  if (property.landlordId !== landlordId) {
+    throw new ApiError(403, "You are not the owner of this property");
+  }
+
+  const updatedProperty = await prisma.property.update({
+    where: { id: propertyId },
+    data: { isAvailable: !property.isAvailable },
+  });
+
+  return updatedProperty;
+};
+
 export const propertyService = {
   postProperty,
   listProperties,
@@ -149,4 +168,5 @@ export const propertyService = {
   getPropertyById,
   updateProperty,
   deleteProperty,
+  toggleAvailability,
 };

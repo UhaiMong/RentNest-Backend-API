@@ -176,6 +176,33 @@ const deleteProperty = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// Toggle availability
+const toggleAvailability = asyncHandler(async (req: Request, res: Response) => {
+  const propertyId = req.params.id as string;
+  const landlordId = req.user!.id;
+
+  try {
+    const property = await propertyService.toggleAvailability(landlordId, propertyId);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Property availability toggled successfully",
+      statusCode: httpStatus.OK,
+      data: property,
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+      data: [],
+    });
+  }
+});
+
 export const propertyController = {
   postProperty,
   listProperties,
@@ -183,4 +210,5 @@ export const propertyController = {
   getSinglePropertyById,
   updateProperty,
   deleteProperty,
+  toggleAvailability,
 };
