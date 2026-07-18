@@ -17,4 +17,9 @@ const main = async () => {
     process.exit(1);
   }
 };
-main();
+
+if (!process.env.VERCEL) {
+  main();
+}
+
+export default app;
