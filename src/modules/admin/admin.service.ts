@@ -58,9 +58,51 @@ const getAllRentalRequests = async () => {
   });
 };
 
+// admin stats
+const adminStats = async () => {
+  const userCount = await prisma.user.count();
+  const activeUser = await prisma.user.count({ where: { status: "ACTIVE" } });
+  const propertyCount = await prisma.property.count();
+  const rentalCount = await prisma.rentalRequest.count();
+  const totalPaidSum = await prisma.payment.aggregate({
+    where: { status: "COMPLETED" },
+    _sum: {
+      amount: true,
+    },
+  });
+  const totalPaidAmount = totalPaidSum._sum.amount;
+  const competedPayment = await prisma.payment.count({
+    where: { status: "COMPLETED" },
+  });
+  const reviewCount = await prisma.review.count();
+  return {
+    total_user: userCount ?? 0,
+    total_active_user: activeUser ?? 0,
+    total_property: propertyCount ?? 0,
+    total_rental: rentalCount ?? 0,
+    total_completed_payment: competedPayment ?? 0,
+    total_paid_amount: totalPaidAmount ?? 0,
+    total_review: reviewCount ?? 0,
+  };
+};
+
+// delete user
+const deleteUser = async (id: string) => {
+  const user = await prisma.user.delete({
+    where: { id },
+  });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return user;
+};
+
 export const adminServices = {
   getAllUsers,
   updateUserStatus,
   getAllProperties,
   getAllRentalRequests,
+  adminStats,
+  deleteUser,
 };

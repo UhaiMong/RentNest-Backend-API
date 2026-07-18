@@ -12,6 +12,7 @@ import landlordRentalRequestRoutes from "./modules/rentals/landlord-rental.route
 import paymentRoutes from "./modules/payments/payment.route";
 import reviewRoutes from "./modules/reviews/review.routes";
 import adminRoutes from "./modules/admin/admin.routes";
+import { errorHandler, notFound } from "./middlewares/error.middleware";
 const app: Application = express();
 
 app.use(
@@ -51,4 +52,9 @@ app.use("/api/landlord/requests", landlordRentalRequestRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
+
+// global error handler
+app.use(notFound);
+app.use(errorHandler);
+
 export default app;

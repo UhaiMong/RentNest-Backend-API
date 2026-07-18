@@ -78,14 +78,12 @@ const getAllRentalRequests = asyncHandler(
   async (req: Request, res: Response) => {
     try {
       const rentals = await adminServices.getAllRentalRequests();
-      res
-        .status(httpStatus.OK)
-        .json({
-          success: true,
-          statusCode: httpStatus.OK,
-          message: "All rental request retrieved successfully",
-          data: rentals,
-        });
+      res.status(httpStatus.OK).json({
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "All rental request retrieved successfully",
+        data: rentals,
+      });
     } catch (error) {
       const statusCode = getErrorStatusCode(error);
       const message =
@@ -100,9 +98,53 @@ const getAllRentalRequests = asyncHandler(
   },
 );
 
+const adminStats = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const stats = await adminServices.adminStats();
+    res.status(httpStatus.OK).json({
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Stats retrieved successfully",
+      data: stats,
+    });
+  } catch (error) {
+    const statusCode = getErrorStatusCode(error);
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(statusCode).json({
+      success: false,
+      message,
+      statusCode,
+      data: [],
+    });
+  }
+});
+const deleteUser = async (req: Request, res: Response) => {
+  const userId = req.params.id as string;
+  try {
+    await adminServices.deleteUser(userId);
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Deleted user successfully",
+      statusCode: httpStatus.OK,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error?.message : "Something went wrong!";
+    const statusCode = getErrorStatusCode(error);
+    res.status(statusCode).json({
+      success: false,
+      message: message,
+      statusCode: statusCode,
+    });
+  }
+};
+
 export const adminController = {
   getAllUsers,
   getAllProperties,
   updateUserStatus,
   getAllRentalRequests,
+  adminStats,
+  deleteUser,
 };
