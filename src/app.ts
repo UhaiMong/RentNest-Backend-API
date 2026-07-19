@@ -1,7 +1,6 @@
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import express, { Request, Response, Application } from "express";
-import { env } from "./config/env";
 import authRoutes from "./modules/auth/auth.routes";
 import userRoutes from "./modules/users/user.route";
 import categoryRoutes from "./modules/categories/category.route";
@@ -30,7 +29,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/", (_req: Request, res: Response) => {
-  res.send("RentNest API is running...");
+  res.json({
+    server: "ok",
+    message: "RentNest server is running...",
+    description:
+      "RentNest is a secure, scalable RRESTful backend API designed for a rental property marketplace. The platform connects tenants, landlords, and administrators in a single ecosystem where landlords can publish rental properties, tenants can request rentals and complete online payments, and administrators can monitor the entire platform. The system follows a role based access control(RBAC) architecture and implements a complete rental lifecycle",
+  });
 });
 
 app.get("/api/health", (_req: Request, res: Response) => {
