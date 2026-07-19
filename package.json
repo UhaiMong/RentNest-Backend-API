@@ -8,7 +8,7 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsup",
+    "build": "prisma generate && tsup",
     "generate": "prisma generate",
     "migrate": "prisma migrate deploy",
     "postinstall": "prisma generate",
