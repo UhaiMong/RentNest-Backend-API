@@ -354,6 +354,132 @@ This modular architecture improves maintainability and scalability.
 
 ---
 
+# API Documentation
+
+Base URL:
+
+```text
+https://api.example.com/v1
+```
+
+## Authentication
+
+Include the access token in the request header:
+
+```http
+Authorization: Bearer <your_access_token>
+Content-Type: application/json
+```
+
+---
+
+# Endpoints
+
+## 1. Create User
+
+**Endpoint**
+
+```http
+POST /users
+```
+
+### Description
+
+Creates a new user.
+
+### Request Body
+
+| Field    | Type   | Required | Description          |
+| -------- | ------ | -------- | -------------------- |
+| name     | string | Yes      | User's full name     |
+| email    | string | Yes      | User's email address |
+| password | string | Yes      | User's password      |
+
+### Sample Request
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "StrongPassword123"
+}
+```
+
+### Sample Response (201)
+
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "created_at": "2026-07-18T10:30:00Z"
+}
+```
+
+---
+
+## 2. Get User Details
+
+**Endpoint**
+
+```http
+GET /users/{id}
+```
+
+### Description
+
+Returns details of a specific user.
+
+### Path Parameters
+
+| Parameter | Type    | Required | Description |
+| --------- | ------- | -------- | ----------- |
+| id        | integer | Yes      | User ID     |
+
+### Request Body
+
+> None
+
+### Sample Request
+
+```http
+GET /users/1
+```
+
+### Sample Response (200)
+
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "created_at": "2026-07-18T10:30:00Z"
+}
+```
+
+---
+
+# Common HTTP Status Codes
+
+| Code | Meaning               |
+| ---- | --------------------- |
+| 200  | OK                    |
+| 201  | Created               |
+| 400  | Bad Request           |
+| 401  | Unauthorized          |
+| 403  | Forbidden             |
+| 404  | Not Found             |
+| 500  | Internal Server Error |
+
+---
+
+# Notes
+
+- Replace the base URL with your API server.
+- Add authentication requirements if different.
+- Add request/response examples for each endpoint.
+- Expand this document with additional endpoints as needed.
+
 # Challenges
 
 Developing RentNest involves solving several real-world backend challenges:
@@ -392,3 +518,47 @@ RentNest is a production-oriented backend system that digitizes the rental prope
 ## ERD SVG
 
 <img src="Rentnest_ERD.svg" width="100%" height="auto" alt="ERD SVG">
+
+Add these lines to tsconfig.json
+
+"include": ["src/**/*"],
+
+"exclude": []
+
+Command: [npm i -g vercel, vercel login, vercel –prod]
+
+vercel.json
+
+{
+
+"version": 2,
+
+"builds": [
+
+{
+
+"src": "dist/server.js",
+
+"use": "@vercel/node"
+
+}
+
+],
+
+"routes": [
+
+{
+
+"src": "/(.\*)",
+
+"dest": "dist/server.js"
+
+}
+
+]
+
+}
+
+```
+
+```

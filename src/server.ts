@@ -1,5 +1,3 @@
-import app from "./app";
-import { env } from "./config/env";
 import { prisma } from "./lib/prisma";
 
 async function main() {
@@ -13,10 +11,3 @@ async function main() {
   }
 }
 main();
-if (env.node_env !== "production") {
-  app.listen(env?.port || 5000, () => {
-    console.log(`RentNest API is running on: ${env?.port}`);
-  });
-}
-
-export default app;
