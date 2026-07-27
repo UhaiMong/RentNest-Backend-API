@@ -4,7 +4,7 @@ import { propertyController } from "./property.controller";
 
 const router = Router();
 
-router.use(authenticate, authorize("LANDLORD"));
+router.use(authenticate, authorize("LANDLORD", "ADMIN"));
 
 router.post("/create", propertyController.postProperty);
 router.get("/", propertyController.listPropertiesByLandlord);

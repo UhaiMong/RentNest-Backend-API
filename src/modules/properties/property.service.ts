@@ -127,7 +127,7 @@ const updateProperty = async (
 
   const updatedProperty = await prisma.property.update({
     where: { id: propertyId },
-    data: { ...data, landlordId },
+    data: data,
   });
 
   return updatedProperty;
@@ -139,11 +139,16 @@ const deleteProperty = async (landlordId: string, propertyId: string) => {
     where: { id: propertyId },
   });
 
-  if (!property) throw new ApiError(404, "Property not found");
+  if (!property) {
+    throw new ApiError(404, "Property not found");
+  }
 
   // Check if the landlord is the owner of the property
   if (property.landlordId !== landlordId) {
-    throw new ApiError(403, "You are not the owner of this property");
+    throw new ApiError(
+      403,
+      "Forbidden Access: You are not authorized to update this property. It's belongs to another landloard!",
+    );
   }
 
   await prisma.property.delete({
