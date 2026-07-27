@@ -515,50 +515,6 @@ By completing RentNest, the project demonstrates proficiency in:
 
 RentNest is a production-oriented backend system that digitizes the rental property process through secure authentication, role-based authorization, structured rental workflows, integrated online payments, and administrative oversight. The project showcases modern backend engineering practices and provides a solid foundation for extending into a full-stack rental marketplace application with web or mobile clients.
 
-## ERD SVG
+<!-- ## ERD SVG
 
-<img src="Rentnest_ERD.svg" width="100%" height="auto" alt="ERD SVG">
-
-Add these lines to tsconfig.json
-
-"include": ["src/**/*"],
-
-"exclude": []
-
-Command: [npm i -g vercel, vercel login, vercel –prod]
-
-vercel.json
-
-{
-
-"version": 2,
-
-"builds": [
-
-{
-
-"src": "dist/server.js",
-
-"use": "@vercel/node"
-
-}
-
-],
-
-"routes": [
-
-{
-
-"src": "/(.\*)",
-
-"dest": "dist/server.js"
-
-}
-
-]
-
-}
-
-```
-
-```
+<img src="Rentnest_ERD.svg" width="100%" height="auto" alt="ERD SVG"> -->
