@@ -86,14 +86,19 @@ const adminStats = async () => {
   };
 };
 
-// delete user
+// Delete user
 const deleteUser = async (id: string) => {
+  const userExists = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!userExists) {
+    throw new ApiError(404, "User not found");
+  }
+
   const user = await prisma.user.delete({
     where: { id },
   });
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
 
   return user;
 };

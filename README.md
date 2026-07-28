@@ -356,10 +356,10 @@ This modular architecture improves maintainability and scalability.
 
 # API Documentation
 
-Base URL:
+### Base URL:
 
 ```text
-https://api.example.com/v1
+https://rentnest-backend-api-blond.vercel.app/api
 ```
 
 ## Authentication
@@ -375,12 +375,12 @@ Content-Type: application/json
 
 # Endpoints
 
-## 1. Create User
+## 1. Create User/ Register
 
 **Endpoint**
 
 ```http
-POST /users
+POST /auth/register
 ```
 
 ### Description
@@ -399,9 +399,10 @@ Creates a new user.
 
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "StrongPassword123"
+  "name": "Land lord 5",
+  "email": "landlord5@gmail.com",
+  "password": "Admin@885",
+  "role": "LANDLORD"
 }
 ```
 
@@ -409,51 +410,102 @@ Creates a new user.
 
 ```json
 {
-  "id": 1,
-  "name": "John Doe",
-  "email": "john@example.com",
-  "created_at": "2026-07-18T10:30:00Z"
+  "success": true,
+  "message": "Registered successfully",
+  "statusCode": 201,
+  "data": {
+    "user": {
+      "id": "cf71436e-ebfc-4995-8a72-4071e466909b",
+      "name": "Land lord 5",
+      "email": "landlord5@gmail.com",
+      "role": "LANDLORD",
+      "status": "ACTIVE",
+      "phone": null,
+      "createdAt": "2026-07-28T02:36:22.358Z",
+      "updatedAt": "2026-07-28T02:36:22.358Z",
+      "profile": {
+        "id": "f7e6b4dc-0c43-49a9-8dd9-e4cb304b17e3",
+        "avatar": null,
+        "about": null,
+        "userId": "cf71436e-ebfc-4995-8a72-4071e466909b",
+        "createdA": "2026-07-28T02:36:22.358Z",
+        "updatedAt": "2026-07-28T02:36:22.358Z"
+      }
+    }
+  }
 }
 ```
 
 ---
 
-## 2. Get User Details
+## 2. Get User Login
 
 **Endpoint**
 
 ```http
-GET /users/{id}
+GET /auth/login
 ```
 
 ### Description
 
-Returns details of a specific user.
-
-### Path Parameters
-
-| Parameter | Type    | Required | Description |
-| --------- | ------- | -------- | ----------- |
-| id        | integer | Yes      | User ID     |
+Login with user credential.
 
 ### Request Body
 
-> None
+```json
+{
+  "email": "landlord5@gmail.com",
+  "password": "Admin@885"
+}
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmNzE0MzZlLWViZmMtNDk5NS04YTcyLTQwNzFlNDY2OTA5YiIsIm5hbWUiOiJMYW5kIGxvcmQgNSIsImVtYWlsIjoibGFuZGxvcmQ1QGdtYWlsLmNvbSIsInJvbGUiOiJMQU5ETE9SRCIsImlhdCI6MTc4NTIwNjQ2NSwiZXhwIjoxNzg1ODExMjY1fQ.dBrd-1TJU5OGrLTTSnKiu44HefJ83WT0_18uj8d65fI",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmNzE0MzZlLWViZmMtNDk5NS04YTcyLTQwNzFlNDY2OTA5YiIsIm5hbWUiOiJMYW5kIGxvcmQgNSIsImVtYWlsIjoibGFuZGxvcmQ1QGdtYWlsLmNvbSIsInJvbGUiOiJMQU5ETE9SRCIsImlhdCI6MTc4NTIwNjQ2NSwiZXhwIjoxNzg3Nzk4NDY1fQ.Hy4q70Jv_rLlN-wSpzIP5zhkT8H3RA2_2hHJSogDI7s"
+  }
+}
+```
 
 ### Sample Request
 
 ```http
-GET /users/1
+GET /auth/me
 ```
 
 ### Sample Response (200)
 
 ```json
 {
-  "id": 1,
-  "name": "John Doe",
-  "email": "john@example.com",
-  "created_at": "2026-07-18T10:30:00Z"
+  "success": true,
+  "message": "User retrieved successfully",
+  "data": {
+    "user": {
+      "id": "cf71436e-ebfc-4995-8a72-4071e466909b",
+      "name": "Land lord 5",
+      "email": "landlord5@gmail.com",
+      "role": "LANDLORD",
+      "status": "ACTIVE",
+      "phone": null,
+      "createdAt": "2026-07-28T02:36:22.358Z",
+      "updatedAt": "2026-07-28T02:36:22.358Z",
+      "profile": {
+        "id": "f7e6b4dc-0c43-49a9-8dd9-e4cb304b17e3",
+        "avatar": null,
+        "about": null,
+        "userId": "cf71436e-ebfc-4995-8a72-4071e466909b",
+        "createdA": "2026-07-28T02:36:22.358Z",
+        "updatedAt": "2026-07-28T02:36:22.358Z"
+      },
+      "properties": [],
+      "rentalRequests": []
+    }
+  }
 }
 ```
 

@@ -106,6 +106,7 @@ const getPropertyById = async (id: string) => {
   return property;
 };
 
+// update
 const updateProperty = async (
   landlordId: string,
   propertyId: string,
