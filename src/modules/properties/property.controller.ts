@@ -11,7 +11,6 @@ import { Request, Response } from "express";
 
 const postProperty = asyncHandler(async (req, res) => {
   const parsed = createPropertySchema.parse(req.body);
-  console.log("Parsed property data:", parsed);
   try {
     const propery = await propertyService.postProperty(req.user!.id, parsed);
 
@@ -64,7 +63,6 @@ const listProperties = asyncHandler(async (req: Request, res: Response) => {
 const listPropertiesByLandlord = asyncHandler(
   async (req: Request, res: Response) => {
     const landlordId = req.user!.id;
-    console.log("Landlord Id: ", landlordId);
 
     try {
       const properties = await propertyService.listPropertiesByLandlord(
@@ -95,8 +93,6 @@ const listPropertiesByLandlord = asyncHandler(
 const getSinglePropertyById = asyncHandler(
   async (req: Request, res: Response) => {
     const propertyId = req.params.id as string;
-
-    console.log("Id: ", propertyId);
 
     try {
       const property = await propertyService.getPropertyById(propertyId!);
@@ -182,7 +178,10 @@ const toggleAvailability = asyncHandler(async (req: Request, res: Response) => {
   const landlordId = req.user!.id;
 
   try {
-    const property = await propertyService.toggleAvailability(landlordId, propertyId);
+    const property = await propertyService.toggleAvailability(
+      landlordId,
+      propertyId,
+    );
 
     res.status(httpStatus.OK).json({
       success: true,
