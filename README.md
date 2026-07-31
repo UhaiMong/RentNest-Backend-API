@@ -362,6 +362,12 @@ This modular architecture improves maintainability and scalability.
 https://rentnest-backend-api-blond.vercel.app/api
 ```
 
+## Postman documentation link
+
+```text
+https://documenter.getpostman.com/view/50662672/2sBY4Qtzmv
+```
+
 ## Authentication
 
 Include the access token in the request header:
